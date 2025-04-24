@@ -1,47 +1,47 @@
-
 import React, { useState, useEffect, useRef } from "react";
 
 function Chat() {
   const [messages, setMessages] = useState([]);
   const [query, setQuery] = useState("");
-  const bottomRef = useRef(null); // Ref to the last message
+  const bottomRef = useRef(null);
 
-  async function formSubmission(e) {
-    e.preventDefault();
-    const userMessage = e.target.children[0].value.trim();
-    if (!userMessage) return;
-    
+  // const localStorage = window.localStorage;
+  // const storedMessages = localStorage.getItem("messages");
 
-    const newMessages = [
-      ...messages,
-      { sender: "user", text: userMessage },
-    ];
-
-    setMessages(newMessages);
-    setQuery("");
-    
-    try{
-      const res = await fetch("/api/chat",{
-        method:"POST",
-        headers:{
+  async function dataFetch(userMessage) {
+    try {
+      const res = await fetch("https://localhost:8080/api/chat", {
+        method: "POST",
+        headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({message: userMessage}),
+        body: JSON.stringify({ message: userMessage }),
       });
-    
-    if(!res.ok) throw new Error("Server error");
 
-    const data = await res.json();
-    setMessages((prev) => [...prev, {sender: "bot", text: data.response}]);
-    }catch (err) {
+      if (!res.ok) throw new Error("Server error");
+
+      const data = await res.json();
+      setMessages((prev) => [...prev, { sender: "bot", text: data.response }]);
+    } catch (err) {
       console.error("Fetch error:", err);
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: "❌ Error from server" },
       ]);
     }
+  }
 
-    e.target.children[0].value = "";
+  function formSubmission(e) {
+    e.preventDefault();
+    const userMessage = e.target.children[0].value.trim();
+    if (!userMessage) return;
+
+    const newMessages = [...messages, { sender: "user", text: userMessage }];
+
+    setMessages(newMessages);
+    setQuery("");
+
+    dataFetch(userMessage);
   }
 
   useEffect(() => {
@@ -49,10 +49,11 @@ function Chat() {
   }, [messages]);
 
   return (
-    <div className="border-l-1 border-black w-full p-5">
-      <div className="border border-0 rounded-2xl shadow-2xl shadow-black w-full h-full flex flex-col items-center p-5">
+    <div className="border-l-1 border-black w-full p-5 ">
+      <div className="border border-0 rounded-2xl shadow-2xl shadow-black bg-amber-50 opacity-90  w-full h-full flex flex-col items-center p-5">
         <h1 className="font-serif text-4xl">AI Chatbot 🤖</h1>
 
+        {/* this div is for conversation */}
         <div className="convo h-full w-full py-5 overflow-y-auto">
           <div className="chat flex flex-col gap-3">
             {messages.map((msg, idx) => (
@@ -71,13 +72,14 @@ function Chat() {
           </div>
         </div>
 
+        {/* this div is for input */}
         <div className="query w-full">
           <div className="w-full p-3">
             <form
               className="submitForm flex flex-row justify-center"
               onSubmit={formSubmission}
             >
-              <input
+              <textarea
                 type="text"
                 name="message"
                 id="messageEntry"
@@ -87,6 +89,7 @@ function Chat() {
               />
               <button
                 type="submit"
+                disabled={!query}
                 className=" -mx-12 h-15 text-2xl w-10 hover:opacity-50"
               >
                 ⬆️
