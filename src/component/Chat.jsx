@@ -1,42 +1,59 @@
 import React, { useState, useEffect, useRef } from "react";
 import Imginpt from "./OCR/Imginpt";
 
-
 function Chat() {
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
   const bottomRef = useRef(null);
 
-  //this is just to make a commit
-  
-  // const localStorage = window.localStorage;
-  // const storedMessages = localStorage.getItem("messages");
-
-  async function dataFetch(userMessage) {
+  async function apiCall(userMessage) {
+    setLoading(true);
+    const url = "https://chatgpt-42.p.rapidapi.com/conversationgpt4-2";
+    const options = {
+      //to add key and host here 
+      method: "POST",
+      headers: {
+        
+        "Content-Type": "application/json",
+      },
+      body:JSON.stringify({
+        messages: [
+          {
+            role: 'user',
+            content: userMessage,
+          }
+        ],
+        system_prompt: '',
+        temperature: 0.9,
+        top_k: 5,
+        top_p: 0.9,
+        max_tokens: 256,
+        web_access: false
+      }),
+    };
     try {
-      const res = await fetch("https://localhost:8080/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: userMessage }),
-      });
-
-      if (!res.ok) throw new Error("Server error");
-
+      const res = await fetch(url, options);
       const data = await res.json();
-      setMessages((prev) => [...prev, { sender: "bot", text: data.response }]);
+      console.log(data);
+      if (data.status == "false") throw new Error(data.error);
+      
+      setMessages((prev) => [...prev, { sender: "bot", text: data.result }]);
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.log(err);
+
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: "❌ Error from server" },
       ]);
     }
+    setLoading(false);
   }
 
   function formSubmission() {
-    const userMessage = document.getElementById('messageEntry').value;
+    const userMessage = document
+      .getElementById("messageEntry")
+      .value.toString();
     if (!userMessage) return;
 
     const newMessages = [...messages, { sender: "user", text: userMessage }];
@@ -44,7 +61,7 @@ function Chat() {
     setMessages(newMessages);
     setQuery("");
 
-    dataFetch(userMessage);
+    apiCall(userMessage);
   }
 
   useEffect(() => {
@@ -54,7 +71,7 @@ function Chat() {
   return (
     <div className="border-l-1 border-black w-full p-5 ">
       <div className="border border-0 rounded-2xl shadow-2xl shadow-black bg-amber-50 opacity-90  w-full h-full flex flex-col items-center p-5">
-        <h1 className="font-serif text-4xl">AI Chatbot 🤖</h1>
+        <h1 className="font-serif text-4xl">ChatNova 🤖</h1>
 
         {/* this div is for conversation */}
         <div className="convo h-full w-full py-5 overflow-y-auto">
@@ -71,6 +88,11 @@ function Chat() {
                 {msg.text}
               </div>
             ))}
+            {loading && (
+              <div className="loader p-3 rounded-xl max-w-[70%] self-start bg-gray-200 text-left">
+                Loading
+              </div>
+            )}
             <div ref={bottomRef} />
           </div>
         </div>
@@ -80,21 +102,21 @@ function Chat() {
           <div className="w-full p-3">
             <form
               className="submitForm flex flex-row justify-center items-center"
-              onSubmit={e => {
+              onSubmit={(e) => {
                 e.preventDefault();
                 formSubmission();
               }}
             >
-              <Imginpt message={{messages, setMessages}}/>
+              <Imginpt message={{ messages, setMessages }} />
 
               <textarea
                 type="text"
                 name="message"
                 id="messageEntry"
-                onKeyDown={(e)=>{
-                  if(e.code == "Enter"){
+                onKeyDown={(e) => {
+                  if (e.code == "Enter") {
                     e.preventDefault();
-                      formSubmission();
+                    formSubmission();
                   }
                 }}
                 className="inputField border-2 border-blue rounded-2xl min-h-15 w-4/5 p-4 shadow-xl"

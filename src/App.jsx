@@ -8,7 +8,6 @@ export default function App(){
   return (
     <>
     <div className="w-screen h-screen flex flex-row justify-around gap-7 p-5 bg-cover bg-no-repeat bg-center " style={{backgroundImage: `url(${img})`}}>
-
     <History />
     <Chat />
       
