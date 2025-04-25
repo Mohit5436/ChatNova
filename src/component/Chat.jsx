@@ -7,7 +7,8 @@ function Chat() {
   const [query, setQuery] = useState("");
   const bottomRef = useRef(null);
 
-
+  //this is just to make a commit
+  
   // const localStorage = window.localStorage;
   // const storedMessages = localStorage.getItem("messages");
 
