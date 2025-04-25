@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
+import Imginpt from "./OCR/Imginpt";
+
 
 function Chat() {
   const [messages, setMessages] = useState([]);
   const [query, setQuery] = useState("");
   const bottomRef = useRef(null);
+
 
   // const localStorage = window.localStorage;
   // const storedMessages = localStorage.getItem("messages");
@@ -31,9 +34,8 @@ function Chat() {
     }
   }
 
-  function formSubmission(e) {
-    e.preventDefault();
-    const userMessage = e.target.children[0].value.trim();
+  function formSubmission() {
+    const userMessage = document.getElementById('messageEntry').value;
     if (!userMessage) return;
 
     const newMessages = [...messages, { sender: "user", text: userMessage }];
@@ -76,13 +78,24 @@ function Chat() {
         <div className="query w-full">
           <div className="w-full p-3">
             <form
-              className="submitForm flex flex-row justify-center"
-              onSubmit={formSubmission}
+              className="submitForm flex flex-row justify-center items-center"
+              onSubmit={e => {
+                e.preventDefault();
+                formSubmission();
+              }}
             >
+              <Imginpt message={{messages, setMessages}}/>
+
               <textarea
                 type="text"
                 name="message"
                 id="messageEntry"
+                onKeyDown={(e)=>{
+                  if(e.code == "Enter"){
+                    e.preventDefault();
+                      formSubmission();
+                  }
+                }}
                 className="inputField border-2 border-blue rounded-2xl min-h-15 w-4/5 p-4 shadow-xl"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -90,7 +103,8 @@ function Chat() {
               <button
                 type="submit"
                 disabled={!query}
-                className=" -mx-12 h-15 text-2xl w-10 hover:opacity-50"
+                id="submitBtn"
+                className=" -mx-10 text-2xl w-10  rounded-2xl hover:opacity-50 focus:bg-amber-950 focus:opacity-50"
               >
                 ⬆️
               </button>
