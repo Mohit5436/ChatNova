@@ -13,7 +13,6 @@ function Chat() {
     const options = {
       
       method: "POST",
-      //to add key and host here
       headers: {
         "x-rapidapi-key": process.env.API_KEY,
       "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
