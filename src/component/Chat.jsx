@@ -11,25 +11,27 @@ function Chat() {
     setLoading(true);
     const url = "https://chatgpt-42.p.rapidapi.com/conversationgpt4-2";
     const options = {
-      //to add key and host here 
+      
       method: "POST",
+      //to add key and host here
       headers: {
-        
+        "x-rapidapi-key": API_KEY,
+      "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
         "Content-Type": "application/json",
       },
-      body:JSON.stringify({
+      body: JSON.stringify({
         messages: [
           {
-            role: 'user',
+            role: "user",
             content: userMessage,
-          }
+          },
         ],
-        system_prompt: '',
+        system_prompt: "",
         temperature: 0.9,
         top_k: 5,
         top_p: 0.9,
         max_tokens: 256,
-        web_access: false
+        web_access: false,
       }),
     };
     try {
@@ -37,8 +39,8 @@ function Chat() {
       const data = await res.json();
       console.log(data);
       if (data.status == "false") throw new Error(data.error);
-      
-      setMessages((prev) => [...prev, { sender: "bot", text: data.result }]);
+
+      setMessages((prev) => [...prev, { sender: "bot", text: (data.result || data.message) }]);
     } catch (err) {
       console.log(err);
 
