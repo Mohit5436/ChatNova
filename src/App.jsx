@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import History from './component/History.jsx'
 import Chat from "./component/Chat.jsx";
+import Image from "./component/Image.jsx";
 import img from "./assets/bgImg.jpg"
 
 export default function App(){
@@ -9,8 +10,9 @@ export default function App(){
   return (
     <>
     <div className="w-screen h-screen flex flex-row justify-around gap-7 p-5 bg-cover bg-no-repeat bg-center " style={{backgroundImage: `url(${img})`}}>
-    <History />
-    <Chat />
+    <History setComp={setComp}/>
+    {comp == "chat" && <Chat />}
+    {comp == "image" && <Image />}
       
     </div>
     
