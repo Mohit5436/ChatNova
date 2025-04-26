@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import History from './component/History.jsx'
 import Chat from "./component/Chat.jsx";
 import img from "./assets/bgImg.jpg"
 
 export default function App(){
+  const [comp, setComp] = useState("chat")
 
   return (
     <>

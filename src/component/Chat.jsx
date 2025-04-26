@@ -14,7 +14,7 @@ function Chat() {
       
       method: "POST",
       headers: {
-        "x-rapidapi-key": process.env.API_KEY,
+        "x-rapidapi-key": "daf3099663msh6a7c3fb72c08931p1c39eejsn1c783288b5ed",
       "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
         "Content-Type": "application/json",
       },
