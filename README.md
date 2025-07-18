@@ -35,6 +35,12 @@ ChatNova is a **frontend React application** built to interact with an AI-powere
 
 ---
 
+## 🌐 Live Demo
+Live Project Link
+<a href = "https://chat-nova-git-main-always5436s-projects.vercel.app"> Click to open </a>
+
+---
+
 ## 🚧 Installation & Running Locally
 
 To get a local copy up and running, follow these simple steps:
